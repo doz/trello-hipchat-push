@@ -60,15 +60,15 @@ class TrelloRequest(object):
 			self.data.append(self.get_latest_board_actions(board))
 
 		self.flush_action_state()
-		self.update_hipchat_connections()
+		# self.update_hipchat_connections()
 
 	def process_api_actions(self, actions):
-		
+
 		if actions:
 			for action in actions:
 				if action['action'] == 'post':
 					self.conn.post(action['path'], action['params'], action['body'])
-					
+
 	def update_hipchat_connections(self):
 		_path = '/search'
 		_params = {'query': 'hipchat'}
@@ -89,14 +89,14 @@ class TrelloRequest(object):
 			is_closed = self.conn.get(_path)
 			_path = '/board/' + boardID + '/name'
 			board_name = self.conn.get(_path)
-			
+
 			if board_name['_value'] == u'Welcome Board':
 				continue
 			if not is_closed['_value']:
 				return_boards.append(boardID)
 		return return_boards
 
-	def get_action_state(self, fname='actionstate.yaml'):		
+	def get_action_state(self, fname='actionstate.yaml'):
 		try:
 			with open(fname, 'r') as fid:
 				self.state = load(fid) or {}
@@ -121,10 +121,10 @@ class TrelloRequest(object):
 		else:
 			_params = {'since': self.state[boardID]}
 
-		
+
 
 		update_data = self.conn.get(_path, _params)
-		
+
 		if len(update_data) > 0:
 			self.state.update({str(boardID): str(update_data[0]['date'])})
 			#print self.state
@@ -134,10 +134,10 @@ class TrelloRequest(object):
 
 
 if __name__ == '__main__':
-	
+
 	req = TrelloRequest()
 	#print req.data
 	actions = TrelloAction(req.data)
 	print actions.to_hipchat
 	req.process_api_actions(actions.api_actions)
-	
+

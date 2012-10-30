@@ -64,7 +64,7 @@ class HipchatRequest(object):
     def send_message(self, msg):
         _path = '/rooms/message'
         _params = {}
-        
+
         from_who = msg['from']
         color = msg['color']
         room_id = None
@@ -75,20 +75,20 @@ class HipchatRequest(object):
         #color = msg['color'] or 'yellow'
 
         if 'room' in msg.keys():
-            desired_room = msg['room'].split(':')[1]
+            desired_room = msg['room']
             if desired_room in self.roomlist.keys():
                 room_id = self.roomlist[desired_room]
         elif 'room_id' in msg.keys():
             room_id = msg['room_id']
         else:
-            room_id = None  
+            room_id = None
 
         if room_id:
             _params.update({'room_id': room_id})
             _params.update({'from': from_who})
             _params.update({'message_format': msg['format']})
             _params.update({'color': color})
-            _params.update({'message': msg['text']}) 
+            _params.update({'message': msg['text']})
             self.conn.post(_path, _params)
 
     def get_recent_messages(self):
